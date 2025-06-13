@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Carta para ti</title>
+    <style>
+        body {
+            background: radial-gradient(circle at 70% 30%, #ffe6f0 0%, #ffd6e0 100%);
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .envelope {
+            width: 370px;
+            height: 260px;
+            position: relative;
+            perspective: 1200px;
+            z-index: 2;
+        }
+        .flap {
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(135deg, #ffb3d1 60%, #fff0f6 100%);
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+            transform-origin: bottom center;
+            box-shadow: 0 8px 24px rgba(255,51,133,0.10);
+            transition: transform 1.2s cubic-bezier(.68,-0.55,.27,1.55);
+            z-index: 3;
+        }
+        .envelope.open .flap {
+            transform: rotateX(-120deg);
+        }
+        .base {
+            width: 100%;
+            height: 100%;
+            background: #fff0f6;
+            border-radius: 18px;
+            box-shadow: 0 12px 40px 0 rgba(255,51,133,0.12), 0 1.5px 8px 0 rgba(0,0,0,0.08);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        .letter {
+            width: 92%;
+            height: 86%;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px 0 rgba(255,51,133,0.08);
+            position: absolute;
+            left: 4%;
+            top: 7%;
+            padding: 32px 28px 28px 28px;
+            box-sizing: border-box;
+            text-align: left;
+            opacity: 0;
+            transform: translateY(40px) scale(0.98);
+            transition: opacity 0.8s 0.7s, transform 0.8s 0.7s;
+            z-index: 2;
+            overflow: hidden;
+        }
+       .envelope.open .letter {
+            opacity: 1;
+            transform: translateY(-130px) scale(1.04); /* Sube y crece la carta */
+            height: 340px; /* Más alto para mostrar todo el mensaje */
+            box-shadow: 0 12px 40px 0 rgba(255,51,133,0.12), 0 1.5px 8px 0 rgba(0,0,0,0.08);
+        }
+        .heart {
+            font-size: 2.2em;
+            color: #ff3385;
+            margin-bottom: 10px;
+            animation: heartbeat 1.3s infinite;
+            display: block;
+            text-align: center;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1);}
+            20% { transform: scale(1.18);}
+            40% { transform: scale(0.95);}
+            60% { transform: scale(1.10);}
+            80% { transform: scale(0.98);}
+        }
+        .letter h1 {
+            font-size: 1.5em;
+            color: #ff3385;
+            margin: 0 0 12px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .letter p {
+            font-size: 1.13em;
+            color: #b30059;
+            margin: 0 0 18px 0;
+            line-height: 1.7;
+            text-align: center;
+        }
+        .signature {
+            margin-top: 18px;
+            font-size: 1.08em;
+            color: #b30059;
+            font-style: italic;
+            opacity: 0.85;
+            text-align: right;
+        }
+        .open-btn {
+            margin-top: 30px;
+            background: linear-gradient(90deg, #ff3385 60%, #ffb3d1 100%);
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            padding: 12px 38px;
+            font-size: 1.15em;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #ffd6e0;
+            transition: background 0.3s;
+            z-index: 10;
+        }
+        .open-btn:hover {
+            background: linear-gradient(90deg, #ff3385 80%, #ff99cc 100%);
+        }
+        /* Floating hearts */
+        .floating-heart {
+            position: absolute;
+            bottom: -40px;
+            font-size: 2em;
+            opacity: 0.7;
+            animation: floatUp 7s linear infinite;
+            pointer-events: none;
+            filter: drop-shadow(0 0 8px #ffb3d1);
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 0.7;
+            }
+            60% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-110vh) scale(1.5) rotate(30deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="envelope" id="envelope">
+        <div class="flap"></div>
+        <div class="base"></div>
+        <div class="letter">
+            <span class="heart">💖</span>
+            <h1>Si te sientes lista para volver a amar...</h1>
+            <p>
+                Enamórate de mí.<br>
+               
+            </p>
+            <div class="signature">— Tu pru pru te ama💗​</div>
+        </div>
+    </div>
+    <button class="open-btn" id="openBtn">Abrir carta</button>
+    <!-- Corazones flotantes -->
+    <script>
+        const colors = ['#ff3385', '#ff66a3', '#ffb3d1', '#ff99cc', '#ff4d88'];
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerHTML = Math.random() > 0.5 ? '💖' : '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (1.5 + Math.random() * 2) + 'em';
+            heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+            heart.style.animationDuration = (5 + Math.random() * 3) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 8000);
+        }
+        setInterval(createHeart, 600);
+
+        // Abrir carta
+        document.getElementById('openBtn').onclick = function() {
+            document.getElementById('envelope').classList.add('open');
+            this.style.display = 'none';
+        };
+    </script>
+</body>
+</html>
